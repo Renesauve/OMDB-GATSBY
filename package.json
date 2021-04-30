@@ -8,6 +8,7 @@
     "@apollo/client": "^3.3.15",
     "apollo-link-rest": "^0.8.0-beta.0",
     "dotenv": "^8.2.0",
+    "fetch-headers": "^2.0.0",
     "gatsby": "^3.3.1",
     "gatsby-plugin-gatsby-cloud": "^2.2.0",
     "gatsby-plugin-image": "^1.4.0",
@@ -20,12 +21,15 @@
     "gatsby-transformer-sharp": "^3.2.0",
     "graphql": "^15.5.0",
     "graphql-anywhere": "^4.2.7",
+    "isomorphic-unfetch": "^3.1.0",
+    "node-fetch": "^2.6.1",
     "prop-types": "^15.7.2",
     "qs": "^6.10.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-helmet": "^6.1.0",
-    "styled-components": "^5.2.3"
+    "styled-components": "^5.2.3",
+    "unfetch": "^4.2.0"
   },
   "devDependencies": {
     "prettier": "2.2.1"
