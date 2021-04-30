@@ -8,27 +8,25 @@ const Movies = () => {
   const [search, setSearch] = useState("")
   const [page, setPage] = useState(1)
   const [favorite, setFavorite] = useState([])
-
+  const [button, setButton] = useState([])
   // const [valid, setValid] = useState(false)
 
+  const { data } = useQuery(SEARCH_MOVIES, {
+    variables: { search, page },
+  })
   const handleChange = event => {
     event.preventDefault()
     setSearch(event.target.value)
     setPage(1)
   }
 
-  const { data } = useQuery(SEARCH_MOVIES, {
-    variables: { search, page },
-  })
-
   let movies = data?.movies?.Search?.map(movie => {
     return { title: movie.Title, id: movie.imdbID, year: movie.Year }
   })
+
   const results = movies?.filter(movie => {
     let title = movie.title
-
     let filterTitle = [title]
-
     return filterTitle.filter(title => title.toLowerCase().includes(search))
   })
 
@@ -36,10 +34,17 @@ const Movies = () => {
     favorite.length <= 4
       ? setFavorite([...favorite, { title: title, id: id }])
       : console.log("nope")
+    setButton([...button, id])
   }
 
-  const removeFav = title => {
-    return favorite.filter(e => (e.title = !title))
+  const removeFav = (title, id) => {
+    setButton(...button, id)
+    const array = [...favorite]
+    const index = array.indexOf(title)
+    if (index === -1) {
+      array.splice(index, 1)
+      setFavorite(array)
+    }
   }
 
   return (
@@ -56,19 +61,18 @@ const Movies = () => {
 
       {results?.map(item => {
         return (
-          <Container key={item.id}>
-            <Card>
-              <div>Title: {item.title}</div>
-              <div>Released: {item.year}</div>
+          <Card key={item.id}>
+            <div>Title: {item.title}</div>
+            <div>Released: {item.year}</div>
 
-              <Button
-                key={item.id}
-                onClick={() => validateFav(item.title, item.id)}
-              >
-                +
-              </Button>
-            </Card>
-          </Container>
+            <Button
+              disabled={button.indexOf(item.id) !== -1}
+              key={item.id}
+              onClick={() => validateFav(item.title, item.id)}
+            >
+              +
+            </Button>
+          </Card>
         )
       })}
 
@@ -86,7 +90,10 @@ const Movies = () => {
             favs.id ? (
               <div key={favs.id}>
                 <div> {favs.title} </div>
-                <button onClick={() => setFavorite(removeFav(favs.title))}>
+                <button
+                  key={favs.id}
+                  onClick={() => removeFav(favs.title, favs.id)}
+                >
                   -
                 </button>
               </div>
@@ -113,10 +120,6 @@ const Button = styled.button`
   height: 2em;
 `
 
-const Container = styled.div`
-  display: flex;
-  flex-flow: column wrap;
-`
 const Card = styled.ul`
   flex-direction: row;
   justify-content: space-around;
