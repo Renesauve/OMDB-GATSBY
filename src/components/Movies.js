@@ -3,7 +3,6 @@ import { SEARCH_MOVIES } from "../apollo/query"
 import { useQuery } from "@apollo/client"
 
 import styled from "styled-components"
-import { id } from "common-tags"
 
 const Movies = () => {
   const [search, setSearch] = useState("")

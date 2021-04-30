@@ -1,3 +1,3 @@
-import GET_MOVIE from "./GET_MOVIE"
+
 import SEARCH_MOVIES from "./SEARCH_MOVIES"
-export { GET_MOVIE, SEARCH_MOVIES }
+export { SEARCH_MOVIES }
