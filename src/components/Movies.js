@@ -7,8 +7,9 @@ import styled from "styled-components"
 const Movies = () => {
   const [search, setSearch] = useState("")
   const [page, setPage] = useState(1)
-
   const [favorite, setFavorite] = useState([])
+
+  // const [valid, setValid] = useState(false)
 
   const handleChange = event => {
     event.preventDefault()
@@ -31,27 +32,11 @@ const Movies = () => {
     return filterTitle.filter(title => title.toLowerCase().includes(search))
   })
 
-  const checkListLength = (title, id) => {
-    return favorite.length <= 4
-      ? favorite => [...favorite, { title: title, id: id }]
-      : favorite
-  }
-
-  // const checkFavExst = (title, id) => {
-  //   console.log(title, id)
-  // }
-
   const validateFav = (title, id) => {
-    return checkListLength(title, id)
-    // checkFavExst(title, id)
+    favorite.length <= 4
+      ? setFavorite([...favorite, { title: title, id: id }])
+      : console.log("nope")
   }
-  // const removeFav = title => {
-  //   return favorite.map(favorites => {
-  //     const filtered = [favorites].filter(e => (e.title = !title))
-
-  //     return filtered
-  //   })
-  // }
 
   const removeFav = title => {
     return favorite.filter(e => (e.title = !title))
@@ -69,20 +54,24 @@ const Movies = () => {
         onChange={handleChange}
       />
 
-      <Container>
-        {results?.map(item => (
-          <Card key={item.id}>
-            <div>Title: {item.title}</div>
-            <div>Released: {item.year}</div>
+      {results?.map(item => {
+        return (
+          <Container key={item.id}>
+            <Card>
+              <div>Title: {item.title}</div>
+              <div>Released: {item.year}</div>
 
-            <Button
-              onClick={() => setFavorite(validateFav(item.title, item.id))}
-            >
-              Favorite
-            </Button>
-          </Card>
-        ))}
-      </Container>
+              <Button
+                key={item.id}
+                onClick={() => validateFav(item.title, item.id)}
+              >
+                +
+              </Button>
+            </Card>
+          </Container>
+        )
+      })}
+
       {page <= 1 ? (
         <button onClick={() => setPage(page + 1)}>Next</button>
       ) : (
@@ -113,7 +102,6 @@ const Movies = () => {
           <div>Choose 5 titles to nominate </div>
         )}
       </Nominated>
-      {console.log(favorite)}
     </>
   )
 }
