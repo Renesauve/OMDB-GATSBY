@@ -30,13 +30,31 @@ const Movies = () => {
 
     return filterTitle.filter(title => title.toLowerCase().includes(search))
   })
-  const chkFav = (title, id) => {
 
-      return favorite.length <= 4
-        ? favorite => [...favorite, { title: title, id: id }]
-        : favorite 
-    
+  const checkListLength = (title, id) => {
+    return favorite.length <= 4
+      ? favorite => [...favorite, { title: title, id: id }]
+      : favorite
+  }
 
+  // const checkFavExst = (title, id) => {
+  //   console.log(title, id)
+  // }
+
+  const validateFav = (title, id) => {
+    return checkListLength(title, id)
+    // checkFavExst(title, id)
+  }
+  // const removeFav = title => {
+  //   return favorite.map(favorites => {
+  //     const filtered = [favorites].filter(e => (e.title = !title))
+
+  //     return filtered
+  //   })
+  // }
+
+  const removeFav = title => {
+    return favorite.filter(e => (e.title = !title))
   }
 
   return (
@@ -57,7 +75,9 @@ const Movies = () => {
             <div>Title: {item.title}</div>
             <div>Released: {item.year}</div>
 
-            <Button onClick={() => setFavorite(chkFav(item.title, item.id))}>
+            <Button
+              onClick={() => setFavorite(validateFav(item.title, item.id))}
+            >
               Favorite
             </Button>
           </Card>
@@ -73,12 +93,18 @@ const Movies = () => {
       )}
       <Nominated>
         <div>
-        {favorite.map(favs => (
-            <div key={favs.id}>
-              <div> {favs.title} </div>
-              <button onClick={() => setFavorite([favs.title = !favs.title])}>-</button>
-            </div>
-          )) }
+          {favorite.map(favs =>
+            favs.id ? (
+              <div key={favs.id}>
+                <div> {favs.title} </div>
+                <button onClick={() => setFavorite(removeFav(favs.title))}>
+                  -
+                </button>
+              </div>
+            ) : (
+              <div></div>
+            )
+          )}
         </div>
 
         {favorite?.length >= 5 ? (
