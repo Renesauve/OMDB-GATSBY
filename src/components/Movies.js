@@ -31,13 +31,12 @@ const Movies = () => {
     return filterTitle.filter(title => title.toLowerCase().includes(search))
   })
   const chkFav = (title, id) => {
-    if (favorite.indexOf(title) !== -1) {
-      return favorite
-    } else {
+
       return favorite.length <= 4
         ? favorite => [...favorite, { title: title, id: id }]
-        : favorite
-    }
+        : favorite 
+    
+
   }
 
   return (
@@ -74,12 +73,12 @@ const Movies = () => {
       )}
       <Nominated>
         <div>
-          {favorite?.map(favs => (
+        {favorite.map(favs => (
             <div key={favs.id}>
               <div> {favs.title} </div>
-              <button onClick={() => setFavorite((favs = !favs))}>-</button>
+              <button onClick={() => setFavorite([favs.title = !favs.title])}>-</button>
             </div>
-          ))}
+          )) }
         </div>
 
         {favorite?.length >= 5 ? (
