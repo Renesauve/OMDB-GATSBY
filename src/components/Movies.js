@@ -32,13 +32,15 @@ const Movies = () => {
 
   const validateFav = (title, id) => {
     favorite.length <= 4
-      ? setFavorite([...favorite, { title: title, id: id }])
+      ? setFavorite(
+          [...favorite, { title: title, id: id }],
+          setButton([...button, id])
+        )
       : console.log("nope")
-    setButton([...button, id])
   }
 
-  const removeFav = (title, id) => {
-    setButton(...button, id)
+  const removeFav = title => {
+    setButton(...button)
     const array = [...favorite]
     const index = array.indexOf(title)
     if (index === -1) {
@@ -49,8 +51,31 @@ const Movies = () => {
 
   return (
     <>
-      <h1 style={{ textAlign: `center` }}>Writing</h1>
+      <Nominated>
+        {favorite?.length >= 5 ? (
+          <NomTitle>You can't add anymore to favorites!</NomTitle>
+        ) : (
+          <NomTitle>Choose 5 movies to nominate! </NomTitle>
+        )}
+
+        {favorite.map(favs =>
+          favs.id ? (
+            <FavCard key={favs.id}>
+              <FavButton
+                key={favs.id}
+                onClick={() => removeFav(favs.title, favs.id)}
+              >
+                -
+              </FavButton>
+              <FavTitle> {favs.title} </FavTitle>
+            </FavCard>
+          ) : (
+            <div></div>
+          )
+        )}
+      </Nominated>
       <h3>You're on page {page} </h3>
+
       <input
         type="text"
         aria-label="Search"
@@ -58,6 +83,14 @@ const Movies = () => {
         value={search}
         onChange={handleChange}
       />
+      {page <= 1 ? (
+        <button onClick={() => setPage(page + 1)}>Next</button>
+      ) : (
+        <div>
+          <button onClick={() => setPage(page - 1)}>Previous</button>
+          <button onClick={() => setPage(page + 1)}>Next</button>
+        </div>
+      )}
 
       {results?.map(item => {
         return (
@@ -67,7 +100,6 @@ const Movies = () => {
 
             <Button
               disabled={button.indexOf(item.id) !== -1}
-              key={item.id}
               onClick={() => validateFav(item.title, item.id)}
             >
               +
@@ -75,62 +107,57 @@ const Movies = () => {
           </Card>
         )
       })}
-
-      {page <= 1 ? (
-        <button onClick={() => setPage(page + 1)}>Next</button>
-      ) : (
-        <div>
-          <button onClick={() => setPage(page - 1)}>Previous</button>
-          <button onClick={() => setPage(page + 1)}>Next</button>
-        </div>
-      )}
-      <Nominated>
-        <div>
-          {favorite.map(favs =>
-            favs.id ? (
-              <div key={favs.id}>
-                <div> {favs.title} </div>
-                <button
-                  key={favs.id}
-                  onClick={() => removeFav(favs.title, favs.id)}
-                >
-                  -
-                </button>
-              </div>
-            ) : (
-              <div></div>
-            )
-          )}
-        </div>
-
-        {favorite?.length >= 5 ? (
-          <div>You can't add anymore to favorites!</div>
-        ) : (
-          <div>Choose 5 titles to nominate </div>
-        )}
-      </Nominated>
     </>
   )
 }
 
 export default Movies
 
+const FavCard = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 10px;
+  background-color: white;
+`
+const FavTitle = styled.div`
+  margin-left: 50px;
+`
+
+const FavButton = styled.div`
+  width: 3em;
+  height: 1em;
+  background-color: red;
+  border-radius: 2px;
+  cursor: pointer;
+  text-align: center;
+`
+
+const NomTitle = styled.h2`
+  font-size: 30px;
+  top: 30px;
+  margin-bottom: 1em;
+  text-align: center;
+`
 const Button = styled.button`
   width: 5em;
   height: 2em;
 `
 
 const Card = styled.ul`
-  flex-direction: row;
-  justify-content: space-around;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  flex-direction: column;
   height: 5em;
+  justify-content: flex-start;
 `
 
 const Nominated = styled.div`
-  width: 400px;
-  height: 100vh;
-  right: 0;
-  top: 0;
-  position: fixed;
-  background-color: purple;
+  display: flex;
+  height: 100px;
+  top: 50px;
+  flex-direction: column;
+  z-index: 100;
+  margin-bottom: 12em;
 `
