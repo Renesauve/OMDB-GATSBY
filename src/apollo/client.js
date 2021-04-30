@@ -3,7 +3,7 @@ import { RestLink } from "apollo-link-rest"
 const fetch = require("node-fetch")
 global.Headers = fetch.Headers
 
-const uri = process.env.OMDB_API
+const uri = process.env.GATSBY_OMDB_API
 
 const restLink = new RestLink({
   uri: uri,
