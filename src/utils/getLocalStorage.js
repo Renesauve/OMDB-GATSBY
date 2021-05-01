@@ -1,15 +1,15 @@
-import isBrowser from './isBrowser'
+import isBrowser from "./isBrowser"
 
-export const getLocalStorage = (storageKey) => {
-    if (!isBrowser) {
-        return null
-    }
+export const getLocalStorage = storageKey => {
+  if (!isBrowser) {
+    return null
+  }
 
-    const storageItem = window.localStorage.getItem(storageKey)
+  const storageItem = window.localStorage.getItem(storageKey)
 
-    const storageItemJSON = storageItem && JSON.parse(storageItem)
+  const storageItemJSON = storageItem && JSON.parse(storageItem)
 
-    return storageItemJSON
+  return storageItemJSON
 }
 
 export default getLocalStorage

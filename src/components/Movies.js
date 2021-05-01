@@ -6,8 +6,8 @@ import styled from "styled-components"
 import AddIcon from "@material-ui/icons/Add"
 import { useSnackbar } from "notistack"
 
-import getLocalStorage from '../utils/getLocalStorage'
-import setLocalStorage from '../utils/setLocalStorage'
+import getLocalStorage from "../utils/getLocalStorage"
+import setLocalStorage from "../utils/setLocalStorage"
 
 const storageKey = "omdb-favs"
 
@@ -21,9 +21,9 @@ const Movies = () => {
 
   const [favorites, setFavorites] = useState(storageFavs || [])
 
-  useEffect(()=>{
+  useEffect(() => {
     favorites && setLocalStorage(storageKey, favorites)
-  },[favorites])
+  }, [favorites])
 
   const { data } = useQuery(SEARCH_MOVIES, {
     variables: { search, page },
@@ -45,111 +45,123 @@ const Movies = () => {
     return filterTitle.filter(title => title.toLowerCase().includes(search))
   })
 
-  const addFav = ({title, id, year }) => {
-
-    const existingItem = favorites && favorites.find(item => item.id === id) 
+  const addFav = ({ title, id, year }) => {
+    const existingItem = favorites && favorites.find(item => item.id === id)
 
     if (!existingItem && favorites.length <= 4) {
-
       setFavorites([...favorites, { title, id, year }])
-      enqueueSnackbar(`Added ${title} to favorites`, { iconVariant:"success", variant:"success" })
+      enqueueSnackbar(`Added ${title} to favorites`, {
+        iconVariant: "success",
+        variant: "success",
+      })
     }
-
   }
 
-  const removeFav = ({title, id}) => {
+  const removeFav = ({ title, id }) => {
     const filteredFavs = favorites && favorites.filter(item => item.id !== id)
     setFavorites(filteredFavs)
 
     if (title) {
-      enqueueSnackbar(`Removed ${title} from favorites`, { variant:"error" })
+      enqueueSnackbar(`Removed ${title} from favorites`, { variant: "error" })
     }
   }
-  
+
   const hasMaximumFavs = favorites?.length >= 5
 
   return (
     <Container>
-        <BannerContainer>
-          {hasMaximumFavs ? (
-            <Typography color="inherit" variant="h4">Thanks for participating <span role="img" aria-label="heart">😍</span></Typography>
-          ) : (
-            <Typography color="inherit" variant="h4">Choose 5 movies to nominate</Typography>
-          )}
-        </BannerContainer>
-        
+      <BannerContainer>
+        {hasMaximumFavs ? (
+          <Typography color="inherit" variant="h4">
+            Thanks for participating{" "}
+            <span role="img" aria-label="heart">
+              😍
+            </span>
+          </Typography>
+        ) : (
+          <Typography color="inherit" variant="h4">
+            Choose 5 movies to nominate
+          </Typography>
+        )}
+      </BannerContainer>
 
-        <Typography variant="h6" gutterBottom>Page {page} </Typography>
+      <Typography variant="h6" gutterBottom>
+        Page {page}
+      </Typography>
 
-        <TextField
-          label="Search"
-          aria-label="Search"
-          placeholder="Type to filter movies..."
-          value={search}
-          onChange={handleChange}
-        />
+      <TextField
+        label="Search"
+        aria-label="Search"
+        placeholder="Type to filter movies..."
+        value={search}
+        onChange={handleChange}
+      />
 
+      <PrevNextBut>
+        <Button
+          disabled={page <= 1}
+          variant="contained"
+          onClick={() => setPage(page - 1)}
+        >
+          Previous
+        </Button>
+        <Button variant="contained" onClick={() => setPage(page + 1)}>
+          Next
+        </Button>
+      </PrevNextBut>
 
-          <PrevNextBut>
-            <Button
-              disabled={page <= 1}
-              variant="contained"
-              onClick={() => setPage(page - 1)}
-            >
-              Previous
-            </Button>
-            <Button variant="contained" onClick={() => setPage(page + 1)}>
-              Next
-            </Button>
-          </PrevNextBut>
-
-     
-
-        {favorites && favorites.map(fav => (
-          
+      {favorites &&
+        favorites.map(fav => (
           <FavCard key={fav.id}>
-            <Typography> {fav.title} {fav.year} </Typography>
+            <Typography>
+              {fav.title} {fav.year}
+            </Typography>
             <FavButton
               variant="contained"
               color="secondary"
-              onClick={() => removeFav({...fav})}
+              onClick={() => removeFav({ ...fav })}
             >
               Remove
             </FavButton>
-            
           </FavCard>
         ))}
-     
 
-      {results && results?.map(item => {
-        return (
-          <Card key={item.id}>
-            <div>
-              <Typography>{item.title} ({item.year})</Typography>
-            </div>
+      {results &&
+        results?.map(item => {
+          return (
+            <Card key={item.id}>
+              <div>
+                <Typography>
+                  {item.title} ({item.year})
+                </Typography>
+              </div>
 
-            <Tooltip 
-              title="You already have maximum 5 favorites"
-              placement="left"
-              disableFocusListener={!hasMaximumFavs}
-              disableTouchListener={!hasMaximumFavs}
-              disableHoverListener={!hasMaximumFavs}
-            >
-            <div>
-              <Button
-                startIcon={<AddIcon />}
-                color="primary"
-                variant="contained"
-                disabled={(!!favorites && !!favorites.find(({id}) => id === item.id) || hasMaximumFavs)}
-                onClick={() => addFav({...item})}
+              <Tooltip
+                title="You already have maximum 5 favorites"
+                placement="left"
+                disableFocusListener={!hasMaximumFavs}
+                disableTouchListener={!hasMaximumFavs}
+                disableHoverListener={!hasMaximumFavs}
               >
-                Add to Favorites
-              </Button>
-            </div>
-            </Tooltip>
-          </Card>
-        )
-      })}
+                <div>
+                  <Button
+                    startIcon={<AddIcon />}
+                    color="primary"
+                    variant="contained"
+                    disabled={
+                      (!!favorites &&
+                        !!favorites.find(({ id }) => id === item.id)) ||
+                      hasMaximumFavs
+                    }
+                    onClick={() => addFav({ ...item })}
+                  >
+                    Add to Favorites
+                  </Button>
+                </div>
+              </Tooltip>
+            </Card>
+          )
+        })}
     </Container>
   )
 }
@@ -159,10 +171,10 @@ export default Movies
 const Container = styled.div``
 
 const BannerContainer = styled.div`
-
-display:flex; align-items:center; justify-content:center;
- padding: 50px;
- 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 50px;
 `
 
 const PrevNextBut = styled.div`
@@ -180,9 +192,8 @@ const FavCard = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 20px;
-  background:#fff;
+  background: #fff;
 `
-
 
 const FavButton = styled(Button)`
   border-radius: 2px;
@@ -193,7 +204,7 @@ const FavButton = styled(Button)`
 const Card = styled.div`
   display: flex;
   flex-wrap: wrap;
-  align-items:center;
+  align-items: center;
   justify-content: space-between;
   padding: 20px;
 `

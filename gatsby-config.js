@@ -6,12 +6,20 @@ module.exports = {
   siteMetadata: {
     title: `Shopify Intern Challenge`,
     description: `A project created for a Challenge.`,
-    author: `@gatsbyjs`,
+    author: `René Sauvé`,
   },
   plugins: [
+    {
+      resolve: `gatsby-plugin-material-ui`,
+      options: {
+        stylesProvider: {
+          injectFirst: true,
+        },
+      },
+    },
+    `gatsby-theme-material-ui`,
     `gatsby-plugin-react-helmet`,
     `gatsby-plugin-image`,
-    `gatsby-theme-material-ui`,
     {
       resolve: `gatsby-source-filesystem`,
       options: {

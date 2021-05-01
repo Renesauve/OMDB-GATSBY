@@ -1,7 +1,7 @@
 {
   "name": "gatsby-omdb",
   "private": true,
-  "description": "OMBD Api",
+  "description": "A project created for Shopify Intern Challenge",
   "version": "0.1.0",
   "author": "Rene Sauve <rdasauve@gmail.com>",
   "dependencies": {
@@ -15,6 +15,7 @@
     "gatsby-plugin-gatsby-cloud": "^2.2.0",
     "gatsby-plugin-image": "^1.4.0",
     "gatsby-plugin-manifest": "^3.2.0",
+    "gatsby-plugin-material-ui": "^3.0.1",
     "gatsby-plugin-offline": "^4.2.0",
     "gatsby-plugin-react-helmet": "^4.2.0",
     "gatsby-plugin-sharp": "^3.2.1",
@@ -53,7 +54,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/gatsbyjs/gatsby-starter-default"
+    "url": "https://github.com/Renesauve/Omdb-api-Gatsby"
   },
   "bugs": {
     "url": "https://github.com/gatsbyjs/gatsby/issues"
