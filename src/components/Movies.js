@@ -1,74 +1,98 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { SEARCH_MOVIES } from "../apollo/query"
 import { useQuery } from "@apollo/client"
-import { Button } from "@material-ui/core"
+import { Button, Typography, TextField, Tooltip } from "@material-ui/core"
 import styled from "styled-components"
 import AddIcon from "@material-ui/icons/Add"
+import { useSnackbar } from "notistack"
+
+import getLocalStorage from '../utils/getLocalStorage'
+import setLocalStorage from '../utils/setLocalStorage'
+
+const storageKey = "omdb-favs"
 
 const Movies = () => {
   const [search, setSearch] = useState("")
   const [page, setPage] = useState(1)
-  const [favorite, setFavorite] = useState([])
-  const [button, setButton] = useState([])
+
+  const { enqueueSnackbar } = useSnackbar()
+
+  const storageFavs = getLocalStorage(storageKey)
+
+  const [favorites, setFavorites] = useState(storageFavs || [])
+
+  useEffect(()=>{
+    favorites && setLocalStorage(storageKey, favorites)
+  },[favorites])
 
   const { data } = useQuery(SEARCH_MOVIES, {
     variables: { search, page },
   })
+
   const handleChange = event => {
     event.preventDefault()
     setSearch(event.target.value)
     setPage(1)
   }
 
-  let movies = data?.movies?.Search?.map(movie => {
+  const movies = data?.movies?.Search?.map(movie => {
     return { title: movie.Title, id: movie.imdbID, year: movie.Year }
   })
 
   const results = movies?.filter(movie => {
-    let title = movie.title
-    let filterTitle = [title]
+    const title = movie.title
+    const filterTitle = [title]
     return filterTitle.filter(title => title.toLowerCase().includes(search))
   })
 
-  const validateFav = (title, id) => {
-    favorite.length <= 4
-      ? setFavorite(
-          [...favorite, { title: title, id: id }],
-          setButton([...button, id])
-        )
-      : console.log("nope")
+  const addFav = ({title, id, year }) => {
+
+    const existingItem = favorites && favorites.find(item => item.id === id) 
+
+    if (!existingItem && favorites.length <= 4) {
+
+      setFavorites([...favorites, { title, id, year }])
+      enqueueSnackbar(`Added ${title} to favorites`, { iconVariant:"success", variant:"success" })
+    }
+
   }
 
-  const removeFav = (title, id) => {
-    const array = [...favorite]
-    const index = array.indexOf(title)
-    if (index === -1) {
-      array.splice(index, 1)
-      setFavorite(array)
+  const removeFav = ({title, id}) => {
+    const filteredFavs = favorites && favorites.filter(item => item.id !== id)
+    setFavorites(filteredFavs)
+
+    if (title) {
+      enqueueSnackbar(`Removed ${title} from favorites`, { variant:"error" })
     }
   }
+  
+  const hasMaximumFavs = favorites?.length >= 5
 
   return (
-    <>
-      <Nominated>
-        {favorite?.length >= 5 ? (
-          <NomTitle>You can't add anymore to favorites!</NomTitle>
-        ) : (
-          <NomTitle>Choose 5 movies to nominate! </NomTitle>
-        )}
-        <h3>You're on page {page} </h3>
-        <input
-          type="text"
+    <Container>
+        <BannerContainer>
+          {hasMaximumFavs ? (
+            <Typography color="inherit" variant="h4">Thanks for participating <span role="img" aria-label="heart">😍</span></Typography>
+          ) : (
+            <Typography color="inherit" variant="h4">Choose 5 movies to nominate</Typography>
+          )}
+        </BannerContainer>
+        
+
+        <Typography variant="h6" gutterBottom>Page {page} </Typography>
+
+        <TextField
+          label="Search"
           aria-label="Search"
-          placeholder="Type to filter posts..."
+          placeholder="Type to filter movies..."
           value={search}
           onChange={handleChange}
         />
 
-        {page <= 1 ? (
+
           <PrevNextBut>
             <Button
-              disabled
+              disabled={page <= 1}
               variant="contained"
               onClick={() => setPage(page - 1)}
             >
@@ -78,70 +102,87 @@ const Movies = () => {
               Next
             </Button>
           </PrevNextBut>
-        ) : (
-          <PrevNextBut>
-            <Button variant="contained" onClick={() => setPage(page - 1)}>
-              Previous
-            </Button>
-            <Button variant="contained" onClick={() => setPage(page + 1)}>
-              Next
-            </Button>
-          </PrevNextBut>
-        )}
-        {favorite.map(fav => (
+
+     
+
+        {favorites && favorites.map(fav => (
+          
           <FavCard key={fav.id}>
+            <Typography> {fav.title} {fav.year} </Typography>
             <FavButton
-              disabled={button.indexOf(fav.id) === -1}
               variant="contained"
-              onClick={() => removeFav(fav.title, fav.id)}
+              color="secondary"
+              onClick={() => removeFav({...fav})}
             >
               Remove
             </FavButton>
-            <FavTitle> {fav.title} </FavTitle>
+            
           </FavCard>
         ))}
-      </Nominated>
+     
 
-      {results?.map(item => {
+      {results && results?.map(item => {
         return (
           <Card key={item.id}>
-            <div>Title: {item.title}</div>
-            <div>Released: {item.year}</div>
+            <div>
+              <Typography>{item.title} ({item.year})</Typography>
+            </div>
 
-            <Button
-              startIcon={<AddIcon />}
-              color="primary"
-              variant="contained"
-              disabled={button.indexOf(item.id) !== -1}
-              onClick={() => validateFav(item.title, item.id)}
+            <Tooltip 
+              title="You already have maximum 5 favorites"
+              placement="left"
+              disableFocusListener={!hasMaximumFavs}
+              disableTouchListener={!hasMaximumFavs}
+              disableHoverListener={!hasMaximumFavs}
             >
-              Add to Favorites
-            </Button>
+            <div>
+              <Button
+                startIcon={<AddIcon />}
+                color="primary"
+                variant="contained"
+                disabled={(!!favorites && !!favorites.find(({id}) => id === item.id) || hasMaximumFavs)}
+                onClick={() => addFav({...item})}
+              >
+                Add to Favorites
+              </Button>
+            </div>
+            </Tooltip>
           </Card>
         )
       })}
-    </>
+    </Container>
   )
 }
 
 export default Movies
 
+const Container = styled.div``
+
+const BannerContainer = styled.div`
+
+display:flex; align-items:center; justify-content:center;
+ padding: 50px;
+ 
+`
+
 const PrevNextBut = styled.div`
   padding: 10px, 0, 20px, 0;
   position: relative;
-  margin-bottom: 20px;
-  margin-top: 10px;
+  margin: 10px 0;
+
+  .MuiButton-root {
+    margin-right: 20px;
+  }
 `
 const FavCard = styled.div`
   display: flex;
-  justify-content: flex-start;
+  flex-wrap: wrap;
   align-items: center;
-  padding: 10px;
-  background-color: white;
+  justify-content: space-between;
+  padding: 20px;
+  background:#fff;
 `
-const FavTitle = styled.div`
-  margin-left: 50px;
-`
+
 
 const FavButton = styled(Button)`
   border-radius: 2px;
@@ -149,26 +190,10 @@ const FavButton = styled(Button)`
   text-align: center;
 `
 
-const NomTitle = styled.h2`
-  font-size: 30px;
-
-  margin-bottom: 1em;
-  text-align: center;
-`
-
-const Card = styled.ul`
+const Card = styled.div`
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-evenly;
-  flex-direction: column;
-  height: 3em;
-  justify-content: flex-start;
-`
-
-const Nominated = styled.div`
-  display: flex;
-  flex-direction: column;
-  z-index: 100;
-  margin-bottom: 2em;
-  height: 100%;
+  align-items:center;
+  justify-content: space-between;
+  padding: 20px;
 `

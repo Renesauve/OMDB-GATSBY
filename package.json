@@ -26,6 +26,7 @@
     "graphql-anywhere": "^4.2.7",
     "isomorphic-unfetch": "^3.1.0",
     "node-fetch": "^2.6.1",
+    "notistack": "^1.0.6",
     "prop-types": "^15.7.2",
     "qs": "^6.10.1",
     "react": "^17.0.1",
