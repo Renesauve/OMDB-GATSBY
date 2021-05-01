@@ -1,30 +1,17 @@
-import { ApolloClient, InMemoryCache } from "@apollo/client"
-import { RestLink } from "apollo-link-rest"
+import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client"
+
 const fetch = require("node-fetch")
-global.Headers = fetch.Headers
+// global.Headers = fetch.Headers
 
-const uri = process.env.GATSBY_OMDB_API
+const uri = process.env.GATSBY_GRAPHQL_URL
 
-const restLink = new RestLink({
-  uri: uri,
-  credentials: "same-origin",
-  // Extra code to be added:
-  typePatcher: {
-    Movies: data => {
-      if (data.Search != null) {
-        data.Search = data.Search.map(search => ({
-          __typename: "Movie",
-          ...search,
-        }))
-      }
-
-      return data
-    },
-  },
+const link = createHttpLink({
+  fetch,
+  uri,
 })
 const client = new ApolloClient({
   cache: new InMemoryCache({}),
-  link: restLink,
+  link,
 })
 
 export default client
