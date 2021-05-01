@@ -196,7 +196,6 @@ const FavCard = styled.div`
 `
 
 const FavButton = styled(Button)`
-  border-radius: 2px;
   cursor: pointer;
   text-align: center;
 `

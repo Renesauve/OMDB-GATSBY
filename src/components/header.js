@@ -3,8 +3,9 @@ import PropTypes from "prop-types"
 import { Link } from "gatsby"
 // import { Button } from "@material-ui/core"
 // import MovieFilterIcon from "@material-ui/icons/MovieFilter"
+import { Typography } from "@material-ui/core"
 const Header = ({ siteTitle }) => (
-  <header
+  <Typography
     style={{
       background: `#008060`,
       marginBottom: `1.45rem`,
@@ -30,7 +31,7 @@ const Header = ({ siteTitle }) => (
         </Link>
       </h1>
     </div>
-  </header>
+  </Typography>
 )
 
 Header.propTypes = {
