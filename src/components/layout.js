@@ -12,7 +12,7 @@ import { useStaticQuery, graphql } from "gatsby"
 import Header from "./header"
 import "./layout.css"
 import { SnackbarProvider } from "notistack"
-
+import { Typography } from "@material-ui/core"
 const Layout = ({ children }) => {
   const data = useStaticQuery(graphql`
     query SiteTitleQuery {
@@ -36,6 +36,15 @@ const Layout = ({ children }) => {
           }}
         >
           <main>{children}</main>
+          <Typography
+            style={{
+              marginTop: `2rem`,
+            }}
+          >
+            © {new Date().getFullYear()}, Built with
+            {` `}
+            <a href="https://www.gatsbyjs.com">Gatsby</a>
+          </Typography>
         </div>
       </SnackbarProvider>
     </>

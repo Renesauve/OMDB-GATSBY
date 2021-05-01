@@ -4,20 +4,20 @@ require("dotenv").config({
 
 module.exports = {
   siteMetadata: {
-    title: `StayInside`,
+    title: `Shopify Intern Challenge`,
     description: `A project created for a Challenge.`,
     author: `René Sauvé`,
   },
   plugins: [
     {
-      resolve: `gatsby-source-wordpress`,
+      resolve: `gatsby-plugin-material-ui`,
       options: {
-        // the only required plugin option for WordPress is the GraphQL url.
-        url: process.env.GATSBY_GRAPHQL_URL,
+        stylesProvider: {
+          injectFirst: true,
+        },
       },
     },
-
-    `gatsby-plugin-theme-ui`,
+    `gatsby-theme-material-ui`,
     `gatsby-plugin-styled-components`,
     `gatsby-plugin-react-helmet`,
     `gatsby-plugin-image`,
@@ -30,18 +30,17 @@ module.exports = {
     },
 
     `gatsby-transformer-sharp`,
-
     `gatsby-plugin-sharp`,
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: `stay-inside-world`,
-        short_name: `stay`,
+        name: `gatsby-starter-default`,
+        short_name: `starter`,
         start_url: `/`,
         background_color: `#663399`,
         theme_color: `#663399`,
         display: `minimal-ui`,
-        icon: `src/images/sunpic.png`,
+        icon: `src/images/gatsby-icon.png`, // This path is relative to the root of the site.
       },
     },
 
