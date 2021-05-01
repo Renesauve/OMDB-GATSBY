@@ -18,6 +18,7 @@ module.exports = {
       },
     },
     `gatsby-theme-material-ui`,
+    `gatsby-plugin-styled-components`,
     `gatsby-plugin-react-helmet`,
     `gatsby-plugin-image`,
     {
