@@ -10,7 +10,6 @@ const Movies = () => {
   const [page, setPage] = useState(1)
   const [favorite, setFavorite] = useState([])
   const [button, setButton] = useState([])
-  // const [valid, setValid] = useState(false)
 
   const { data } = useQuery(SEARCH_MOVIES, {
     variables: { search, page },
@@ -45,7 +44,7 @@ const Movies = () => {
     const index = array.indexOf(title)
     if (index === -1) {
       array.splice(index, 1)
-      setFavorite(array, setButton([...button, id]))
+      setFavorite(array)
     }
   }
 
@@ -89,23 +88,18 @@ const Movies = () => {
             </Button>
           </PrevNextBut>
         )}
-        {favorite.map(favs =>
-          favs.id ? (
-            <FavCard key={favs.id}>
-              <FavButton
-                disabled={button.indexOf(favs.id) === -1}
-                variant="contained"
-                key={favs.id}
-                onClick={() => removeFav(favs.title, favs.id)}
-              >
-                Remove
-              </FavButton>
-              <FavTitle> {favs.title} </FavTitle>
-            </FavCard>
-          ) : (
-            <div></div>
-          )
-        )}
+        {favorite.map(fav => (
+          <FavCard key={fav.id}>
+            <FavButton
+              disabled={button.indexOf(fav.id) === -1}
+              variant="contained"
+              onClick={() => removeFav(fav.title, fav.id)}
+            >
+              Remove
+            </FavButton>
+            <FavTitle> {fav.title} </FavTitle>
+          </FavCard>
+        ))}
       </Nominated>
 
       {results?.map(item => {
@@ -118,7 +112,6 @@ const Movies = () => {
               startIcon={<AddIcon />}
               color="primary"
               variant="contained"
-              width=" 10em"
               disabled={button.indexOf(item.id) !== -1}
               onClick={() => validateFav(item.title, item.id)}
             >
