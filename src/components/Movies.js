@@ -1,8 +1,9 @@
 import React, { useState } from "react"
 import { SEARCH_MOVIES } from "../apollo/query"
 import { useQuery } from "@apollo/client"
-
+import { Button } from "@material-ui/core"
 import styled from "styled-components"
+import AddIcon from "@material-ui/icons/Add"
 
 const Movies = () => {
   const [search, setSearch] = useState("")
@@ -39,13 +40,12 @@ const Movies = () => {
       : console.log("nope")
   }
 
-  const removeFav = title => {
-    setButton(...button)
+  const removeFav = (title, id) => {
     const array = [...favorite]
     const index = array.indexOf(title)
     if (index === -1) {
       array.splice(index, 1)
-      setFavorite(array)
+      setFavorite(array, setButton([...button, id]))
     }
   }
 
@@ -57,15 +57,48 @@ const Movies = () => {
         ) : (
           <NomTitle>Choose 5 movies to nominate! </NomTitle>
         )}
+        <h3>You're on page {page} </h3>
+        <input
+          type="text"
+          aria-label="Search"
+          placeholder="Type to filter posts..."
+          value={search}
+          onChange={handleChange}
+        />
 
+        {page <= 1 ? (
+          <PrevNextBut>
+            <Button
+              disabled
+              variant="contained"
+              onClick={() => setPage(page - 1)}
+            >
+              Previous
+            </Button>
+            <Button variant="contained" onClick={() => setPage(page + 1)}>
+              Next
+            </Button>
+          </PrevNextBut>
+        ) : (
+          <PrevNextBut>
+            <Button variant="contained" onClick={() => setPage(page - 1)}>
+              Previous
+            </Button>
+            <Button variant="contained" onClick={() => setPage(page + 1)}>
+              Next
+            </Button>
+          </PrevNextBut>
+        )}
         {favorite.map(favs =>
           favs.id ? (
             <FavCard key={favs.id}>
               <FavButton
+                disabled={button.indexOf(favs.id) === -1}
+                variant="contained"
                 key={favs.id}
                 onClick={() => removeFav(favs.title, favs.id)}
               >
-                -
+                Remove
               </FavButton>
               <FavTitle> {favs.title} </FavTitle>
             </FavCard>
@@ -74,23 +107,6 @@ const Movies = () => {
           )
         )}
       </Nominated>
-      <h3>You're on page {page} </h3>
-
-      <input
-        type="text"
-        aria-label="Search"
-        placeholder="Type to filter posts..."
-        value={search}
-        onChange={handleChange}
-      />
-      {page <= 1 ? (
-        <button onClick={() => setPage(page + 1)}>Next</button>
-      ) : (
-        <div>
-          <button onClick={() => setPage(page - 1)}>Previous</button>
-          <button onClick={() => setPage(page + 1)}>Next</button>
-        </div>
-      )}
 
       {results?.map(item => {
         return (
@@ -99,10 +115,14 @@ const Movies = () => {
             <div>Released: {item.year}</div>
 
             <Button
+              startIcon={<AddIcon />}
+              color="primary"
+              variant="contained"
+              width=" 10em"
               disabled={button.indexOf(item.id) !== -1}
               onClick={() => validateFav(item.title, item.id)}
             >
-              +
+              Add to Favorites
             </Button>
           </Card>
         )
@@ -113,6 +133,12 @@ const Movies = () => {
 
 export default Movies
 
+const PrevNextBut = styled.div`
+  padding: 10px, 0, 20px, 0;
+  position: relative;
+  margin-bottom: 20px;
+  margin-top: 10px;
+`
 const FavCard = styled.div`
   display: flex;
   justify-content: flex-start;
@@ -124,10 +150,7 @@ const FavTitle = styled.div`
   margin-left: 50px;
 `
 
-const FavButton = styled.div`
-  width: 3em;
-  height: 1em;
-  background-color: red;
+const FavButton = styled(Button)`
   border-radius: 2px;
   cursor: pointer;
   text-align: center;
@@ -135,13 +158,9 @@ const FavButton = styled.div`
 
 const NomTitle = styled.h2`
   font-size: 30px;
-  top: 30px;
+
   margin-bottom: 1em;
   text-align: center;
-`
-const Button = styled.button`
-  width: 5em;
-  height: 2em;
 `
 
 const Card = styled.ul`
@@ -149,15 +168,14 @@ const Card = styled.ul`
   flex-wrap: wrap;
   justify-content: space-evenly;
   flex-direction: column;
-  height: 5em;
+  height: 3em;
   justify-content: flex-start;
 `
 
 const Nominated = styled.div`
   display: flex;
-  height: 100px;
-  top: 50px;
   flex-direction: column;
   z-index: 100;
-  margin-bottom: 12em;
+  margin-bottom: 2em;
+  height: 100%;
 `
