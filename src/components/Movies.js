@@ -155,7 +155,7 @@ const Movies = () => {
                     }
                     onClick={() => addFav({ ...item })}
                   >
-                    Add to Favorites
+                    Nominate
                   </Button>
                 </div>
               </Tooltip>
